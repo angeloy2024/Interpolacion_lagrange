@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+<section class="caja">
+    <h2>Datos de la tabla</h2>
+    <form method="post">
+        <label for="tabla_x">Valores de x (separados por comas):</label>
+        <input type="text" id="tabla_x" name="tabla_x" value="{{ datos.tabla_x }}" required>
+
+        <label for="tabla_y">Valores de f(x) (separados por comas):</label>
+        <input type="text" id="tabla_y" name="tabla_y" value="{{ datos.tabla_y }}" required>
+
+        <label for="x">Valor de x a interpolar:</label>
+        <input type="text" id="x" name="x" value="{{ datos.x }}" required>
+
+        <label class="check">
+            <input type="checkbox" name="comparar_ln" {% if datos.comparar_ln %}checked{% endif %}>
+            Comparar con el valor real de ln(x)
+        </label>
+
+        <button type="submit">Interpolar</button>
+    </form>
+</section>
+
+{% if error %}
+<section class="caja error">
+    <h2>Error</h2>
+    <p>{{ error }}</p>
+</section>
+{% endif %}
+
+{% if resultado %}
+<section class="caja">
+    <h2>Procedimiento</h2>
+
+    <p><strong>1. Intervalo encontrado:</strong>
+        x = {{ resultado.x }} está entre
+        {{ resultado.intervalo[0] }} y {{ resultado.intervalo[1] }}.</p>
+
+    <p><strong>2. Polinomio usado:</strong> {{ resultado.metodo }}</p>
+
+    <p><strong>3. Puntos y coeficientes de Lagrange L<sub>i</sub>(x):</strong></p>
+    <table>
+        <tr>
+            <th>i</th>
+            <th>x<sub>i</sub></th>
+            <th>f(x<sub>i</sub>)</th>
+            <th>L<sub>i</sub>(x)</th>
+            <th>f(x<sub>i</sub>) · L<sub>i</sub>(x)</th>
+        </tr>
+        {% for xi, yi, li in resultado.puntos %}
+        <tr>
+            <td>{{ loop.index0 }}</td>
+            <td>{{ xi }}</td>
+            <td>{{ "%.6f" | format(yi) }}</td>
+            <td>{{ "%.6f" | format(li) }}</td>
+            <td>{{ "%.6f" | format(yi * li) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p class="resultado"><strong>4. Resultado:</strong>
+        f({{ resultado.x }}) ≈ {{ "%.6f" | format(resultado.valor) }}</p>
+
+    {% if resultado.real is defined %}
+    <h2>Comparación con ln(x)</h2>
+    <table>
+        <tr><th>Valor real ln({{ resultado.x }})</th><td>{{ "%.6f" | format(resultado.real) }}</td></tr>
+        <tr><th>Valor interpolado</th><td>{{ "%.6f" | format(resultado.valor) }}</td></tr>
+        <tr><th>Error absoluto</th><td>{{ "%.6f" | format(resultado.error_abs) }}</td></tr>
+        {% if resultado.error_rel is defined %}
+        <tr><th>Error relativo</th><td>{{ "%.4f" | format(resultado.error_rel) }} %</td></tr>
+        {% endif %}
+    </table>
+    {% endif %}
+</section>
+{% endif %}
+{% endblock %}

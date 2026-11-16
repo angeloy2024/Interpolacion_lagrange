@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Búsqueda en la tabla - Interpolación de Lagrange</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Búsqueda en la tabla con polinomios de Lagrange</h1>
+        <p>Intervalos intermedios: polinomio cúbico. Primer y último intervalo: polinomio cuadrático.</p>
+    </header>
+    <main>
+        {% block contenido %}{% endblock %}
+    </main>
+</body>
+</html>
